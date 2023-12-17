@@ -10,8 +10,11 @@ def find_type(hand_labeled):
     
     # Four of a kind OR Full house
     elif len(hand_labeled) == 2:
+        # If there is 1 or 4 J's, then it will be a five of a kind
+        if "J" in hand_labeled:
+            return "Five_of_a_kind"
         for key in hand_labeled:
-            if hand_labeled[key] == 4:
+            if  hand_labeled[key] == 4:
                 return "Four_of_a_kind"
             elif hand_labeled[key] == 3 or hand_labeled[key] == 2:
                 return "Full_house"
@@ -20,6 +23,17 @@ def find_type(hand_labeled):
 
     # Three of a kind OR Two pair
     elif len(hand_labeled) == 3:
+        if "J" in hand_labeled:
+            # If there is 3 or 2 J's, then there is four of a kind
+            if hand_labeled["J"] == 3 or hand_labeled["J"] == 2:
+                return "Four_of_a_kind"
+            else:
+                # If there is 1 J, it can either be a four of a kind
+                # OR a three of kind plus the other pair, which is a full house
+                if 3 in hand_labeled.values():
+                    return "Four_of_a_kind"
+                else:
+                    return "Full_house"
         for key in hand_labeled:
             if hand_labeled[key] == 3:
                 return "Three_of_a_kind"
@@ -30,10 +44,17 @@ def find_type(hand_labeled):
 
     # Pair
     elif len(hand_labeled) == 4:
+        # If there are 1 or 2 J's, then there is a three of a kind
+        if "J" in hand_labeled:
+            if hand_labeled["J"] <= 2:
+                return "Three_of_a_kind"
         return "Pair"
     
     # High Card
     else:
+        # If J in hand, then there is a pair
+        if "J" in hand_labeled:
+            return "Pair"
         return "High_card"
     
 # Create hand strength dictionaries to separate hands for ranking order
@@ -70,7 +91,7 @@ with open("input.txt", "r") as f:
 
     # To order hand strengths based on rules
     ordered_hands = OrderedDict()
-    order = "AKQJT98765432"
+    order = "AKQT98765432J"
 
     # Order hands within its own hand type
     five_of_a_kind_keys = list(five_of_a_kind_dict.keys())
@@ -121,5 +142,6 @@ with open("input.txt", "r") as f:
     total_winnings = 0
     for rank, item in enumerate(ordered_hands, start=1):
         total_winnings += (int(ordered_hands[item]) * rank)
+        # print(item,ordered_hands[item], rank, total_winnings)
 
     print(total_winnings) 
